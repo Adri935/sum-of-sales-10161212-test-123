@@ -6,6 +6,7 @@ async function fetchData() {
         const text = await response.text();
         const totalSales = calculateTotalSales(text);
         document.getElementById('total-sales').textContent = `Total Sales: $${totalSales.toFixed(2)}`;
+        populateProductSales(text);
     } catch (error) {
         document.getElementById('total-sales').textContent = 'Error loading data';
         console.error('Fetch error:', error);
@@ -22,6 +23,20 @@ function calculateTotalSales(csvData) {
         }
     }
     return total;
+}
+
+function populateProductSales(csvData) {
+    const rows = csvData.split('\n').slice(1); // Skip header
+    const tbody = document.querySelector('#product-sales tbody');
+    tbody.innerHTML = ''; // Clear existing rows
+    for (const row of rows) {
+        const columns = row.split(',');
+        if (columns.length > 1) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>Product ${columns[0]}</td><td>$${parseFloat(columns[1]).toFixed(2)}</td>`;
+            tbody.appendChild(tr);
+        }
+    }
 }
 
 fetchData();
